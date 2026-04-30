@@ -13,7 +13,6 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
 
     override suspend fun getTopUsers(): Result<List<User>> = runCatching {
-        // TODO: add caching
         api.getTopUsers().items.map { it.toDomainModel() }
     }
 
