@@ -1,6 +1,5 @@
 package io.cmcode.stackusers.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,13 +27,12 @@ class UsersViewModel @Inject constructor(
     val uiState: StateFlow<UsersUiState> = usersUseCase()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5_000), // survive config changes
             initialValue = UsersUiState.Loading
         )
 
     fun toggleFollow(user: User) {
         viewModelScope.launch {
-            Log.d("StackUsers", "toggleFollow: ${user.userId} followed=${user.isFollowed}")
             if (user.isFollowed) {
                 repository.unfollowUser(user.userId)
             } else {
