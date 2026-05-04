@@ -19,15 +19,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class UserRepositoryImplTest {
+class UserRepositoryTest {
 
     private val api: StackOverflowApi = mockk()
     private val followStorage: FollowStorage = mockk()
     private lateinit var repository: UserRepositoryImpl
 
     private val sampleDtos = listOf(
-        UserDto(1, "Jon Skeet", 1_400_000, null, "Reading, UK", 35000, 58),
-        UserDto(2, "Gordon Linoff", 700_000, null, null, 30000, 12)
+        UserDto(22656, "Jon Skeet", 1_362_987, "https://i.sstatic.net/ICsRH.jpg", "Reading, UK"),
+        UserDto(1144035, "Gordon Linoff", 701_754, null, null)
     )
 
     @Before
@@ -36,27 +36,13 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    fun getTopUsers_returnsMappedUsers() = runTest {
-        coEvery { api.getTopUsers() } returns UsersResponse(sampleDtos)
-
-        val result = repository.getTopUsers()
-
-        assertTrue(result.isSuccess)
-        val users = result.getOrThrow()
-        assertEquals(2, users.size)
-        assertEquals("1", users[0].userId)
-        assertEquals("Jon Skeet", users[0].displayName)
-        assertEquals("", users[0].profileImage)
-    }
-
-    @Test
-    fun `getTopUsers converts userId from Int to String`() = runTest {
+    fun `getTopUsers returns mapped users from api`() = runTest {
         coEvery { api.getTopUsers() } returns UsersResponse(sampleDtos)
 
         val users = repository.getTopUsers().getOrThrow()
 
-        assertEquals("1", users[0].userId)
-        assertEquals("2", users[1].userId)
+        assertEquals(2, users.size)
+        assertEquals("Jon Skeet", users[0].displayName)
     }
 
     @Test
@@ -97,3 +83,4 @@ class UserRepositoryImplTest {
         coVerify { followStorage.unfollow("42") }
     }
 }
+

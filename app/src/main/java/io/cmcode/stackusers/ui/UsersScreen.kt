@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -15,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import io.cmcode.stackusers.domain.model.User
+import io.cmcode.stackusers.domain.model.UsersUiState
 
 @Composable
 fun UsersScreen(
@@ -41,13 +42,19 @@ fun UsersScreen(
     viewModel: UsersViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    UsersContent(uiState = uiState, onToggleFollow = viewModel::toggleFollow, modifier = modifier)
+    UsersContent(
+        uiState = uiState,
+        onToggleFollow = viewModel::toggleFollow,
+        onRetry = viewModel::retry,
+        modifier = modifier
+    )
 }
 
 @Composable
 internal fun UsersContent(
     uiState: UsersUiState,
     onToggleFollow: (User) -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (val state = uiState) {
@@ -58,15 +65,20 @@ internal fun UsersContent(
             CircularProgressIndicator(modifier = Modifier.semantics { testTag = "loading_indicator" })
         }
 
-        is UsersUiState.Error -> Box(
+        is UsersUiState.Error -> Column(
             modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = state.message,
                 color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(onClick = onRetry) {
+                Text("Retry")
+            }
         }
 
         is UsersUiState.Success -> LazyColumn(
@@ -135,6 +147,8 @@ private fun UserCard(
     }
 }
 
-private fun Int.formatReputation(): String {
-    return if (this >= 1_000) "${this / 1_000}k" else toString()
+private fun Int.formatReputation(): String = when {
+    this >= 1_000_000 -> "${"%.1f".format(this / 1_000_000.0)}m"
+    this >= 1_000 -> "${(this + 500) / 1_000}k"
+    else -> toString()
 }

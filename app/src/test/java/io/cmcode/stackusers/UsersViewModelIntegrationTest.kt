@@ -3,7 +3,7 @@ package io.cmcode.stackusers
 import app.cash.turbine.test
 import io.cmcode.stackusers.domain.model.User
 import io.cmcode.stackusers.domain.usecase.UsersUseCase
-import io.cmcode.stackusers.ui.UsersUiState
+import io.cmcode.stackusers.domain.model.UsersUiState
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -17,8 +17,8 @@ class UsersViewModelIntegrationTest {
     private val useCase = UsersUseCase(fakeRepository)
 
     private val sampleUsers = listOf(
-        User("1", "Jon Skeet", 1_400_000, "", "Reading, UK", 35000, 58),
-        User("2", "Gordon Linoff", 700_000, "", null, 30000, 12)
+        User("22656", "Jon Skeet", 1_362_987, "https://i.sstatic.net/ICsRH.jpg", "Reading, UK"),
+        User("1144035", "Gordon Linoff", 701_754, "", null)
     )
 
     @Before
@@ -55,7 +55,7 @@ class UsersViewModelIntegrationTest {
             val initial = awaitItem() as UsersUiState.Success
             assertFalse(initial.users[0].isFollowed)
 
-            fakeRepository.followUser("1")
+            fakeRepository.followUser("22656")
 
             val updated = awaitItem() as UsersUiState.Success
             assertTrue(updated.users[0].isFollowed)

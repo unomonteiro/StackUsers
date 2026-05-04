@@ -8,18 +8,14 @@ data class UserDto(
     @SerializedName("display_name") val displayName: String,
     @SerializedName("reputation") val reputation: Int,
     @SerializedName("profile_image") val profileImage: String?,
-    @SerializedName("location") val location: String?,
-    @SerializedName("answer_count") val answerCount: Int = 0,
-    @SerializedName("question_count") val questionCount: Int = 0
+    @SerializedName("location") val location: String?
 ) {
     fun toDomainModel(): User = User(
         userId = userId.toString(),
         displayName = displayName,
         reputation = reputation,
         profileImage = profileImage.orEmpty(),
-        location = location,
-        answerCount = answerCount,
-        questionCount = questionCount
+        location = location
     )
 }
 

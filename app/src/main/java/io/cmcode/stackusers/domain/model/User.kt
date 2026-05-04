@@ -6,7 +6,5 @@ data class User(
     val reputation: Int,
     val profileImage: String,
     val location: String?,
-    val answerCount: Int,
-    val questionCount: Int,
     val isFollowed: Boolean = false
 )

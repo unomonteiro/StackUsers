@@ -1,7 +1,7 @@
 package io.cmcode.stackusers.domain.usecase
 
 import io.cmcode.stackusers.domain.repository.UserRepository
-import io.cmcode.stackusers.ui.UsersUiState
+import io.cmcode.stackusers.domain.model.UsersUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow

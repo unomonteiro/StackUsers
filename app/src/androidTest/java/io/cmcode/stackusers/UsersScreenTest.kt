@@ -9,8 +9,8 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.cmcode.stackusers.domain.model.User
+import io.cmcode.stackusers.domain.model.UsersUiState
 import io.cmcode.stackusers.ui.UsersContent
-import io.cmcode.stackusers.ui.UsersUiState
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -23,14 +23,14 @@ class UsersScreenTest {
     val composeTestRule = createComposeRule()
 
     private val sampleUsers = listOf(
-        User("1", "Jon Skeet", 1_400_000, "", "Reading, UK", 35000, 58),
-        User("2", "Gordon Linoff", 700_000, "", null, 30000, 12)
+        User("22656", "Jon Skeet", 1_362_987, "https://i.sstatic.net/ICsRH.jpg", "Reading, UK"),
+        User("1144035", "Gordon Linoff", 701_754, "", null)
     )
 
     @Test
     fun loading_showsProgressIndicator() {
         composeTestRule.setContent {
-            UsersContent(uiState = UsersUiState.Loading, onToggleFollow = {})
+            UsersContent(uiState = UsersUiState.Loading, onToggleFollow = {}, onRetry = {})
         }
 
         composeTestRule.onNodeWithTag("loading_indicator").assertIsDisplayed()
@@ -39,7 +39,7 @@ class UsersScreenTest {
     @Test
     fun success_showsUserNames() {
         composeTestRule.setContent {
-            UsersContent(uiState = UsersUiState.Success(sampleUsers), onToggleFollow = {})
+            UsersContent(uiState = UsersUiState.Success(sampleUsers), onToggleFollow = {}, onRetry = {})
         }
 
         composeTestRule.onNodeWithText("Jon Skeet").assertIsDisplayed()
@@ -47,12 +47,30 @@ class UsersScreenTest {
     }
 
     @Test
-    fun error_showsErrorMessage() {
+    fun error_showsErrorMessageAndRetryButton() {
         composeTestRule.setContent {
-            UsersContent(uiState = UsersUiState.Error("Network error"), onToggleFollow = {})
+            UsersContent(uiState = UsersUiState.Error("Network error"), onToggleFollow = {}, onRetry = {})
         }
 
         composeTestRule.onNodeWithText("Network error").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Retry").assertIsDisplayed()
+    }
+
+    @Test
+    fun error_retryButton_triggersCallback() {
+        var retried = false
+
+        composeTestRule.setContent {
+            UsersContent(
+                uiState = UsersUiState.Error("Network error"),
+                onToggleFollow = {},
+                onRetry = { retried = true }
+            )
+        }
+
+        composeTestRule.onNodeWithText("Retry").performClick()
+
+        assertEquals(true, retried)
     }
 
     @Test
@@ -62,7 +80,8 @@ class UsersScreenTest {
         composeTestRule.setContent {
             UsersContent(
                 uiState = UsersUiState.Success(sampleUsers),
-                onToggleFollow = { toggledUser = it }
+                onToggleFollow = { toggledUser = it },
+                onRetry = {}
             )
         }
 

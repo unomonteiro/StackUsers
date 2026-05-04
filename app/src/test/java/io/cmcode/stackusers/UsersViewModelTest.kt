@@ -3,7 +3,7 @@ package io.cmcode.stackusers
 import io.cmcode.stackusers.domain.model.User
 import io.cmcode.stackusers.domain.repository.UserRepository
 import io.cmcode.stackusers.domain.usecase.UsersUseCase
-import io.cmcode.stackusers.ui.UsersUiState
+import io.cmcode.stackusers.domain.model.UsersUiState
 import io.cmcode.stackusers.ui.UsersViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -29,8 +29,8 @@ class UsersViewModelTest {
     private val repository: UserRepository = mockk()
 
     private val sampleUsers = listOf(
-        User("1", "Jon Skeet", 1_400_000, "", "Reading, UK", 35000, 58),
-        User("2", "Gordon Linoff", 700_000, "", null, 30000, 12)
+        User("22656", "Jon Skeet", 1_362_987, "https://i.sstatic.net/ICsRH.jpg", "Reading, UK"),
+        User("1144035", "Gordon Linoff", 701_754, "", null)
     )
 
     @Before
@@ -55,7 +55,7 @@ class UsersViewModelTest {
         viewModel.toggleFollow(user)
         advanceUntilIdle()
 
-        coVerify { repository.followUser("1") }
+        coVerify { repository.followUser("22656") }
     }
 
     @Test
@@ -67,7 +67,7 @@ class UsersViewModelTest {
         viewModel.toggleFollow(user)
         advanceUntilIdle()
 
-        coVerify { repository.unfollowUser("1") }
+        coVerify { repository.unfollowUser("22656") }
     }
 
 }

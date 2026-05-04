@@ -10,6 +10,6 @@ interface StackOverflowApi {
         @Query("order") order: String = "desc",
         @Query("sort") sort: String = "reputation",
         @Query("site") site: String = "stackoverflow",
-        @Query("pagesize") pageSize: Int = 30
+        @Query("pagesize") pageSize: Int = 20
     ): UsersResponse
 }
